@@ -146,6 +146,13 @@ const en: Messages = {
   'settings.tasknotes.alreadyMatch': 'Statuses and priorities already match TaskNotes.',
   'settings.atLeastOne': 'You must have at least one {field}.',
   'settings.remapped': "Remapped {count} task(s) from '{from}' to '{to}'.",
+  'settings.ai.heading': 'AI summary',
+  'settings.ai.baseUrl.name': 'API URL',
+  'settings.ai.baseUrl.desc': 'OpenAI-compatible base URL (e.g. http://localhost:11434/v1). Leave empty to disable.',
+  'settings.ai.apiKey.name': 'API key',
+  'settings.ai.apiKey.desc': 'Optional; local services may not need one.',
+  'settings.ai.model.name': 'Model',
+  'settings.ai.model.desc': 'Model name (e.g. gpt-4o-mini, deepseek-chat, qwen2.5).',
 
   // --- week label options ---
   'weekLabel.weekNumber': 'Week number (w15)',
@@ -402,6 +409,11 @@ const en: Messages = {
   // --- portfolio timeline ---
   'portfolio.title': 'Timeline',
   'portfolio.noProjects': 'No projects yet',
+  'ai.title': 'Plan summary',
+  'ai.generate': 'AI summary',
+  'ai.generating': 'Generating\u2026',
+  'ai.notConfigured': 'Configure the AI endpoint in settings first.',
+  'ai.failed': 'Failed to generate summary: {error}',
 
   // --- project view ---
   'projectView.project': 'Project',
@@ -591,6 +603,13 @@ const zh: Messages = {
   'settings.tasknotes.alreadyMatch': '状态和优先级已与 TaskNotes 一致。',
   'settings.atLeastOne': '必须至少保留一个{field}。',
   'settings.remapped': '已将 {count} 个任务从「{from}」重新映射到「{to}」。',
+  'settings.ai.heading': 'AI 总结',
+  'settings.ai.baseUrl.name': 'API 地址',
+  'settings.ai.baseUrl.desc': 'OpenAI 兼容接口的 base URL（如 http://localhost:11434/v1）。留空则禁用。',
+  'settings.ai.apiKey.name': 'API Key',
+  'settings.ai.apiKey.desc': '可选；本地服务通常不需要。',
+  'settings.ai.model.name': '模型',
+  'settings.ai.model.desc': '模型名（如 gpt-4o-mini、deepseek-chat、qwen2.5）。',
 
   // --- week label options ---
   'weekLabel.weekNumber': '周序号（w15）',
@@ -847,6 +866,11 @@ const zh: Messages = {
   // --- portfolio timeline ---
   'portfolio.title': '全局时间线',
   'portfolio.noProjects': '暂无项目',
+  'ai.title': '计划总结',
+  'ai.generate': 'AI 总结',
+  'ai.generating': '生成中\u2026',
+  'ai.notConfigured': '请先在设置中配置 AI 接口。',
+  'ai.failed': '生成总结失败：{error}',
 
   // --- project view ---
   'projectView.project': '项目',

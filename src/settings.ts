@@ -179,6 +179,27 @@ export class PMSettingTab extends PluginSettingTab {
         heading: t('settings.integrations.heading'),
         visible: () => isTaskNotesInstalled(this.app),
         items: [this.taskNotesPage()]
+      },
+      {
+        type: 'group',
+        heading: t('settings.ai.heading'),
+        items: [
+          {
+            name: t('settings.ai.baseUrl.name'),
+            desc: t('settings.ai.baseUrl.desc'),
+            control: { type: 'text', key: 'aiBaseUrl', placeholder: 'http://localhost:11434/v1' }
+          },
+          {
+            name: t('settings.ai.apiKey.name'),
+            desc: t('settings.ai.apiKey.desc'),
+            control: { type: 'text', key: 'aiApiKey', placeholder: 'sk-...' }
+          },
+          {
+            name: t('settings.ai.model.name'),
+            desc: t('settings.ai.model.desc'),
+            control: { type: 'text', key: 'aiModel', placeholder: 'gpt-4o-mini' }
+          }
+        ]
       }
     ]
   }

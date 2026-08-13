@@ -1,10 +1,11 @@
-import { ButtonComponent, ItemView, WorkspaceLeaf, Menu, setIcon } from 'obsidian'
+import { ButtonComponent, Component, ItemView, WorkspaceLeaf, Menu, MarkdownRenderer, Notice, setIcon } from 'obsidian'
 import type PMPlugin from '../main'
 import type { GanttGranularity, Project, StatusConfig, Task, TaskSortMode } from '../types'
 import { flattenTasks } from '../store/TaskTreeOps'
 import { getPriorityConfig, getStatusConfig, sortTaskTree, svgEl } from '../utils'
 import { parsePlainDate, today } from '../dates'
 import { t } from '../i18n'
+import { generatePlanSummary, isAiConfigured } from '../ai'
 import { openTaskModal } from '../ui/ModalFactory'
 import { EmptyState } from '../ui/primitives/EmptyState'
 import { SegmentedControl } from '../ui/primitives/SegmentedControl'
@@ -34,6 +35,9 @@ export class PortfolioTimelineView extends ItemView {
   private plugin: PMPlugin
   private granularity: GanttGranularity
   private sortMode: TaskSortMode = 'default'
+  private projects: Project[] = []
+  private summary: string | null = null
+  private generating = false
   private scrollEl: HTMLElement | null = null
   private cfg: TimelineCfg | null = null
 
@@ -73,8 +77,8 @@ export class PortfolioTimelineView extends ItemView {
     root.empty()
     root.addClass('pm-gantt-view')
 
-    const projects = await this.plugin.store.loadAllProjects(this.plugin.settings.projectsFolder)
-    if (projects.length === 0) {
+    this.projects = await this.plugin.store.loadAllProjects(this.plugin.settings.projectsFolder)
+    if (this.projects.length === 0) {
       new EmptyState(root)
         .setIcon('\u{1F4CB}')
         .setTitle(t('portfolio.noProjects'))
@@ -83,7 +87,8 @@ export class PortfolioTimelineView extends ItemView {
     }
 
     this.renderControls(root)
-    this.renderTimeline(root, projects)
+    if (this.summary || this.generating) this.renderSummary(root)
+    this.renderTimeline(root, this.projects)
   }
 
   private renderControls(root: HTMLElement): void {
@@ -110,6 +115,49 @@ export class PortfolioTimelineView extends ItemView {
     bar.createSpan({ cls: 'pm-gantt-sep' })
     this.renderSortControl(bar)
     new ButtonComponent(bar).setButtonText(t('gantt.today')).onClick(() => this.scrollToToday())
+
+    new ButtonComponent(bar)
+      .setIcon('sparkles')
+      .setButtonText(this.generating ? t('ai.generating') : t('ai.generate'))
+      .setDisabled(this.generating)
+      .onClick(() => void this.generateSummary())
+  }
+
+  private async generateSummary(): Promise<void> {
+    if (!isAiConfigured(this.plugin)) {
+      new Notice(t('ai.notConfigured'))
+      return
+    }
+    this.generating = true
+    void this.render()
+    try {
+      this.summary = await generatePlanSummary(this.plugin, this.projects)
+    } catch (err) {
+      new Notice(t('ai.failed', { error: String(err) }))
+    } finally {
+      this.generating = false
+      void this.render()
+    }
+  }
+
+  private renderSummary(root: HTMLElement): void {
+    const panel = root.createDiv('pm-portfolio-summary')
+    const header = panel.createDiv('pm-portfolio-summary-header')
+    header.createSpan({ text: t('ai.title'), cls: 'pm-portfolio-summary-title' })
+    const closeBtn = new ButtonComponent(header).setIcon('x').onClick(() => {
+      this.summary = null
+      void this.render()
+    })
+    closeBtn.buttonEl.addClass('pm-portfolio-summary-close')
+
+    const body = panel.createDiv('pm-portfolio-summary-body')
+    if (this.generating) {
+      body.createSpan({ text: t('ai.generating'), cls: 'pm-portfolio-summary-loading' })
+    } else if (this.summary) {
+      const comp = new Component()
+      comp.load()
+      void MarkdownRenderer.render(this.app, this.summary, body, '', comp)
+    }
   }
 
   private renderSortControl(bar: HTMLElement): void {

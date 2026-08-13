@@ -164,6 +164,10 @@ export interface PMSettings {
   projectFilters: Record<string, PerProjectFilter>
   /** Collapsed task ids per project path. Lives here so a toggle doesn't rewrite task files. */
   collapsedTasks: Record<string, string[]>
+  /** OpenAI-compatible endpoint for the AI plan summary (empty = disabled). */
+  aiBaseUrl: string
+  aiApiKey: string
+  aiModel: string
 }
 
 export const DEFAULT_STATUSES: StatusConfig[] = [
@@ -199,7 +203,10 @@ export const DEFAULT_SETTINGS: PMSettings = {
   pullForwardOnEarlyFinish: false,
   saveTaskOnClose: true,
   projectFilters: {},
-  collapsedTasks: {}
+  collapsedTasks: {},
+  aiBaseUrl: '',
+  aiApiKey: '',
+  aiModel: 'gpt-4o-mini'
 }
 
 export function makeId(): string {
