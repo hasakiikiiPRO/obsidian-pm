@@ -56,7 +56,7 @@ export function renderPriorityBadge(
   const badge = new Chip(container)
     .setLabel(formatBadgeText(config?.icon, config?.label ?? task.priority))
     .setColor(config?.color ?? 'var(--text-muted)')
-    .setVariant('plain')
+    .setVariant('solid')
   const icon = namedIcon(config)
   if (icon) {
     badge.setLeadingIcon(icon)

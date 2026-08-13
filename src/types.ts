@@ -175,10 +175,10 @@ export const DEFAULT_STATUSES: StatusConfig[] = [
 ]
 
 export const DEFAULT_PRIORITIES: PriorityConfig[] = [
-  { id: 'critical', label: 'Critical', color: '#c47070', icon: '' },
-  { id: 'high', label: 'High', color: '#b8a06b', icon: '' },
-  { id: 'medium', label: 'Medium', color: '#8a94a0', icon: '' },
-  { id: 'low', label: 'Low', color: '#79b58d', icon: '' }
+  { id: 'critical', label: 'Critical', color: '#e5534b', icon: '' },
+  { id: 'high', label: 'High', color: '#e8a33d', icon: '' },
+  { id: 'medium', label: 'Medium', color: '#4f8cc9', icon: '' },
+  { id: 'low', label: 'Low', color: '#98a2b3', icon: '' }
 ]
 
 export const DEFAULT_SETTINGS: PMSettings = {

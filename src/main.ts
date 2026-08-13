@@ -201,6 +201,27 @@ export default class PMPlugin extends Plugin {
       }
     }
 
+    // The original default priority colors collided with the status palette; upgrade
+    // anyone still on them to the new, distinct palette. Custom colors are left alone.
+    const priorityColorMigration: Record<string, string> = {
+      critical: '#c47070',
+      high: '#b8a06b',
+      medium: '#8a94a0',
+      low: '#79b58d'
+    }
+    const newPriorityColors: Record<string, string> = {
+      critical: '#e5534b',
+      high: '#e8a33d',
+      medium: '#4f8cc9',
+      low: '#98a2b3'
+    }
+    for (const p of this.settings.priorities) {
+      if (p.color === priorityColorMigration[p.id]) {
+        p.color = newPriorityColors[p.id]
+        migrated = true
+      }
+    }
+
     // ganttHideDone was a global toggle, now expressed as a per-project status filter.
     const legacy = (saved ?? {}) as { ganttHideDone?: boolean }
     if (legacy.ganttHideDone === true) {
