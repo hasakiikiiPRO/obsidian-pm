@@ -4,6 +4,7 @@ import type { Project } from '../types'
 import { flattenTasks } from '../store/TaskTreeOps'
 import { isTerminalStatus } from '../utils'
 import { Temporal, today, parsePlainDate } from '../dates'
+import { t } from '../i18n'
 
 const CHECK_INTERVAL_MS = 60 * 60 * 1000 // check every hour
 
@@ -58,14 +59,14 @@ export class Notifier {
         if (isOverdue && !this.notifiedIds.has(notifKey + '-overdue')) {
           this.notifiedIds.add(notifKey + '-overdue')
           const daysAgo = now.since(due, { largestUnit: 'days' }).days
-          new Notice(`⚠️ Overdue: "${task.title}" in ${project.title} was due ${daysAgo}d ago`, 8000)
+          new Notice(t('notify.overdue', { title: task.title, project: project.title, days: daysAgo }), 8000)
         } else if (isDueSoon && !this.notifiedIds.has(notifKey + '-soon')) {
           this.notifiedIds.add(notifKey + '-soon')
           const daysLeft = due.since(now, { largestUnit: 'days' }).days
           const msg =
             daysLeft === 0
-              ? `📅 Due today: "${task.title}" in ${project.title}`
-              : `📅 Due in ${daysLeft}d: "${task.title}" in ${project.title}`
+              ? t('notify.dueToday', { title: task.title, project: project.title })
+              : t('notify.dueSoon', { title: task.title, project: project.title, days: daysLeft })
           new Notice(msg, 6000)
         }
       }

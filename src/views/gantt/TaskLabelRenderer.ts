@@ -6,6 +6,7 @@ import { openTaskModal } from '../../ui/ModalFactory'
 import { renderStatusDot } from '../../ui/StatusBadge'
 import { safeAsync } from '../../utils'
 import { ROW_HEIGHT } from './TimelineConfig'
+import { t } from '../../i18n'
 
 export interface LabelContext {
   plugin: PMPlugin
@@ -83,7 +84,7 @@ export function renderTaskLabel(
 
   new IconButton(el)
     .setIcon('plus')
-    .setTooltip('Add subtask')
+    .setTooltip(t('gantt.addSubtask'))
     .setRevealOnHover(true)
     .onClick((e) => {
       e.stopPropagation()

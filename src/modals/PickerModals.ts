@@ -1,5 +1,6 @@
 import { SuggestModal, App } from 'obsidian'
 import type { Project, Task } from '../types'
+import { t } from '../i18n'
 
 const NEW_TAG_PREFIX = '__new__:'
 
@@ -10,7 +11,7 @@ export class ProjectPickerModal extends SuggestModal<Project> {
     private onChoose: (project: Project) => void
   ) {
     super(app)
-    this.setPlaceholder('Pick a project…')
+    this.setPlaceholder(t('picker.pickProject'))
   }
 
   getSuggestions(query: string): Project[] {
@@ -32,7 +33,7 @@ export class TaskPickerModal extends SuggestModal<Task> {
     app: App,
     private tasks: Task[],
     private onChoose: (task: Task) => void,
-    placeholder = 'Pick a parent task…'
+    placeholder = t('picker.pickParent')
   ) {
     super(app)
     this.setPlaceholder(placeholder)
@@ -59,7 +60,7 @@ export class TagPickerModal extends SuggestModal<string> {
     private onChoose: (tag: string) => void
   ) {
     super(app)
-    this.setPlaceholder('Search or create a tag…')
+    this.setPlaceholder(t('picker.searchTag'))
   }
 
   getSuggestions(query: string): string[] {
@@ -74,7 +75,7 @@ export class TagPickerModal extends SuggestModal<string> {
   renderSuggestion(item: string, el: HTMLElement): void {
     if (item.startsWith(NEW_TAG_PREFIX)) {
       const tag = item.slice(NEW_TAG_PREFIX.length)
-      el.createSpan({ text: `Create: ${tag}`, cls: 'pm-suggest-create' })
+      el.createSpan({ text: t('picker.create', { tag }), cls: 'pm-suggest-create' })
     } else {
       el.createSpan({ text: item })
     }

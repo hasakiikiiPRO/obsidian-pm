@@ -10,6 +10,7 @@ import { KanbanView } from './KanbanView'
 import { openProjectModal, openTaskModal } from '../ui/ModalFactory'
 import { ViewSwitcher } from '../ui/primitives/ViewSwitcher'
 import { ProjectHeader } from '../ui/composites/ProjectHeader'
+import { t } from '../i18n'
 
 export const PM_PROJECT_VIEW_TYPE = 'pm-project'
 
@@ -49,7 +50,7 @@ export class ProjectView extends ItemView {
     return PM_PROJECT_VIEW_TYPE
   }
   getDisplayText(): string {
-    return truncateTitle(this.project?.title ?? 'Project', 10)
+    return truncateTitle(this.project?.title ?? t('projectView.project'), 10)
   }
   getIcon(): string {
     return 'chart-gantt'
@@ -182,8 +183,8 @@ export class ProjectView extends ItemView {
     this.header = null
     this.bodyEl.empty()
     const msg = this.bodyEl.createDiv('pm-empty-state')
-    msg.createEl('h3', { text: 'Project not found' })
-    msg.createEl('p', { text: `No project at ${this.filePath}. It may have been deleted or renamed.` })
+    msg.createEl('h3', { text: t('projectView.notFound') })
+    msg.createEl('p', { text: t('projectView.notFoundBody', { path: this.filePath }) })
   }
 
   private renderProjectHeader(): void {
@@ -302,7 +303,7 @@ export class ProjectView extends ItemView {
     const iconEl = left.createSpan({
       text: this.project.icon,
       cls: 'pm-toolbar-icon',
-      attr: { 'aria-label': 'Edit project', role: 'button', tabindex: '0' }
+      attr: { 'aria-label': t('projectView.editProject'), role: 'button', tabindex: '0' }
     })
     iconEl.addEventListener('click', () => {
       openProjectModal(this.plugin, { project: this.project })
@@ -322,9 +323,9 @@ export class ProjectView extends ItemView {
 
     new ViewSwitcher<ViewMode>(this.toolbarEl, {
       options: [
-        { id: 'table', icon: 'table', label: 'Table' },
-        { id: 'gantt', icon: 'git-fork', label: 'Gantt' },
-        { id: 'kanban', icon: 'layout-dashboard', label: 'Board' }
+        { id: 'table', icon: 'table', label: t('view.table') },
+        { id: 'gantt', icon: 'git-fork', label: t('view.gantt') },
+        { id: 'kanban', icon: 'layout-dashboard', label: t('view.board') }
       ],
       active: this.currentView,
       onChange: (mode) => {
@@ -335,7 +336,7 @@ export class ProjectView extends ItemView {
 
     const right = this.toolbarEl.createDiv('pm-toolbar-right')
     new ButtonComponent(right)
-      .setButtonText('+ add task')
+      .setButtonText(t('projectView.addTask'))
       .setCta()
       .onClick(() => {
         if (!this.project) return
@@ -347,7 +348,7 @@ export class ProjectView extends ItemView {
       })
 
     if (this.currentView === 'gantt') {
-      new ButtonComponent(right).setButtonText('+ milestone').onClick(() => {
+      new ButtonComponent(right).setButtonText(t('projectView.milestone')).onClick(() => {
         if (!this.project) return
         openTaskModal(this.plugin, this.project, {
           defaults: { type: 'milestone' },
@@ -360,7 +361,7 @@ export class ProjectView extends ItemView {
 
     new ExtraButtonComponent(right)
       .setIcon('settings')
-      .setTooltip('Project settings')
+      .setTooltip(t('projectView.settings'))
       .onClick(() => {
         openProjectModal(this.plugin, { project: this.project })
       })

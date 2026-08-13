@@ -1,6 +1,7 @@
 import { AbstractInputSuggest, App, Notice, getIconIds, setIcon } from 'obsidian'
 import type { PriorityConfig, StatusConfig } from '../types'
 import { IconButton } from './primitives/IconButton'
+import { t } from '../i18n'
 
 /** Typed emoji are kept as-is; only Lucide ids are suggested. */
 class IconSuggest extends AbstractInputSuggest<string> {
@@ -64,7 +65,7 @@ export interface PaletteEntry {
 export function renderPaletteFields(parent: HTMLElement, app: App, item: PaletteEntry, onChanged: () => void): void {
   const icon = parent.createEl('input', { type: 'text', value: item.icon })
   icon.addClass('pm-settings-status-icon')
-  icon.placeholder = 'Icon'
+  icon.placeholder = t('palette.icon')
   attachIconSuggest(app, icon)
   icon.addEventListener('change', () => {
     item.icon = icon.value
@@ -90,7 +91,7 @@ export function renderStatusDoneToggle(parent: HTMLElement, status: StatusConfig
   const wrapper = parent.createEl('label', { cls: 'pm-settings-complete-toggle' })
   const checkbox = wrapper.createEl('input', { type: 'checkbox' })
   checkbox.checked = status.complete
-  wrapper.createSpan({ text: 'Done', cls: 'pm-settings-complete-text' })
+  wrapper.createSpan({ text: t('common.done'), cls: 'pm-settings-complete-text' })
   checkbox.addEventListener('change', () => {
     status.complete = checkbox.checked
     onChanged()
@@ -128,7 +129,7 @@ function renderPaletteListEditor<T extends PaletteEntry>(container: HTMLElement,
 
     new IconButton(row)
       .setIcon('x')
-      .setTooltip('Remove')
+      .setTooltip(t('common.remove'))
       .onClick(() => {
         if (opts.items.length <= 1) {
           new Notice(opts.minOneMessage)
@@ -156,7 +157,7 @@ export function renderStatusListEditor(container: HTMLElement, opts: StatusListE
     items: opts.statuses,
     onChanged: opts.onChanged,
     onDeleted: opts.onDeleted,
-    minOneMessage: 'You must have at least one status.',
+    minOneMessage: t('palette.atLeastOneStatus'),
     renderExtra: (row, status) => renderStatusDoneToggle(row, status, opts.onChanged)
   })
 }
@@ -174,6 +175,6 @@ export function renderPriorityListEditor(container: HTMLElement, opts: PriorityL
     items: opts.priorities,
     onChanged: opts.onChanged,
     onDeleted: opts.onDeleted,
-    minOneMessage: 'You must have at least one priority.'
+    minOneMessage: t('palette.atLeastOnePriority')
   })
 }

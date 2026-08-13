@@ -9,8 +9,7 @@ import type { SortKey, SortDir, TableState } from './TableRenderer'
 import { updateSelectAllCheckbox } from './TableRow'
 import { renderBulkActionBar } from './BulkActionBar'
 import type { BulkAction } from './BulkActionBar'
-
-const taskCount = (n: number) => `${n} task${n === 1 ? '' : 's'}`
+import { t, tPlural } from '../../i18n'
 
 export interface TableViewState {
   sortKey: SortKey
@@ -139,26 +138,26 @@ export class TableView implements SubView {
           break
         case 'set-parent':
           await this.plugin.store.moveTasks(this.project, ids, action.parentId)
-          new Notice(`Moved ${taskCount(ids.length)} under new parent`)
+          new Notice(tPlural(ids.length, 'table.movedUnderParent'))
           break
         case 'remove-parent':
           await this.plugin.store.moveTasks(this.project, ids, null)
-          new Notice(`Moved ${taskCount(ids.length)} to top level`)
+          new Notice(tPlural(ids.length, 'table.movedTopLevel'))
           break
         case 'archive':
           for (const id of ids) {
             await this.plugin.store.archiveTask(this.project, id)
           }
-          new Notice(`Archived ${taskCount(ids.length)}`)
+          new Notice(tPlural(ids.length, 'table.archivedN'))
           break
         case 'unarchive':
           for (const id of ids) {
             await this.plugin.store.unarchiveTask(this.project, id)
           }
-          new Notice(`Unarchived ${taskCount(ids.length)}`)
+          new Notice(tPlural(ids.length, 'table.unarchivedN'))
           break
         case 'delete':
-          if (!(await confirmDialog(this.plugin.app, `Delete ${taskCount(ids.length)}? This cannot be undone.`))) {
+          if (!(await confirmDialog(this.plugin.app, tPlural(ids.length, 'table.deleteConfirm')))) {
             return
           }
           await this.plugin.store.deleteTasks(this.project, ids)
@@ -168,7 +167,7 @@ export class TableView implements SubView {
       await this.onRefresh()
     } catch (err) {
       console.error('Bulk action failed', err)
-      new Notice('Bulk action failed. Please try again.')
+      new Notice(t('table.bulkFailed'))
       await this.onRefresh()
     }
   }

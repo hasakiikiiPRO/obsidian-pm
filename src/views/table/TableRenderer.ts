@@ -7,6 +7,7 @@ import { openTaskModal } from '../../ui/ModalFactory'
 import { renderAddButton } from '../../ui/composites/addButton'
 import { compareTask } from './TableFilters'
 import { renderTaskRow, updateSelectedRow, updateSelectAllCheckbox } from './TableRow'
+import { t } from '../../i18n'
 
 type SortKey = 'title' | 'status' | 'priority' | 'due' | 'assignees' | 'progress'
 type SortDir = 'asc' | 'desc'
@@ -82,13 +83,13 @@ export function renderTable(ctx: TableContext): void {
 
   const cols: { key: SortKey | null; label: string; width?: string }[] = [
     { key: null, label: '', width: '32px' },
-    { key: 'title', label: 'Task', width: 'auto' },
-    { key: 'status', label: 'Status', width: '130px' },
-    { key: 'priority', label: 'Priority', width: '110px' },
-    { key: 'assignees', label: 'Assignees', width: '140px' },
-    { key: 'due', label: 'Due', width: '110px' },
-    { key: 'progress', label: 'Progress', width: '120px' },
-    { key: null, label: 'Time', width: '90px' }
+    { key: 'title', label: t('table.task'), width: 'auto' },
+    { key: 'status', label: t('table.status'), width: '130px' },
+    { key: 'priority', label: t('table.priority'), width: '110px' },
+    { key: 'assignees', label: t('table.assignees'), width: '140px' },
+    { key: 'due', label: t('table.due'), width: '110px' },
+    { key: 'progress', label: t('table.progress'), width: '120px' },
+    { key: null, label: t('table.time'), width: '90px' }
   ]
   const sortableHeaders: { key: SortKey; th: HTMLElement }[] = []
   const paintSortIndicators = () => {
@@ -109,7 +110,7 @@ export function renderTable(ctx: TableContext): void {
     if (col.key) {
       th.addClass('pm-table-th-sortable')
       th.setAttribute('role', 'button')
-      th.setAttribute('aria-label', `Sort by ${col.label}`)
+      th.setAttribute('aria-label', t('table.sortBy', { label: col.label }))
       th.createSpan({ text: col.label })
       sortableHeaders.push({ key: col.key, th })
       th.addEventListener('click', () => {
@@ -239,7 +240,7 @@ function renderWindowRows(ctx: TableContext): void {
 
   const addRow = tbody.createEl('tr', { cls: 'pm-table-add-row' })
   const addCell = addRow.createEl('td', { attr: { colspan: String(colCount) } })
-  renderAddButton(addCell, 'Add task', () => {
+  renderAddButton(addCell, t('table.addTask'), () => {
     openTaskModal(ctx.plugin, ctx.project, { onSave: () => ctx.onRefresh() })
   })
 

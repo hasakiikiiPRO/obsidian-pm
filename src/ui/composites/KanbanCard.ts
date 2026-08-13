@@ -6,6 +6,7 @@ import { ProgressBar } from '../primitives/ProgressBar'
 import { renderDueChip } from './dueChip'
 import { renderTagChip } from './tagChip'
 import { renderTimeChip } from './timeChip'
+import { t } from '../../i18n'
 
 export interface KanbanCardProps {
   task: Task
@@ -50,7 +51,7 @@ export class KanbanCard {
         .setVariant('solid')
         .setSize('sm')
         .setColor('var(--color-purple)')
-        .setTooltip('Milestone')
+        .setTooltip(t('kanban.milestone'))
     }
     if (task.type === 'subtask') {
       new Chip(titleRow)
@@ -58,7 +59,7 @@ export class KanbanCard {
         .setVariant('solid')
         .setSize('sm')
         .setColor('var(--color-green)')
-        .setTooltip('Subtask')
+        .setTooltip(t('kanban.subtask'))
     }
     if (task.recurrence) {
       new Chip(titleRow)
@@ -66,7 +67,7 @@ export class KanbanCard {
         .setVariant('solid')
         .setSize('sm')
         .setColor('var(--color-blue)')
-        .setTooltip('Recurring')
+        .setTooltip(t('kanban.recurring'))
     }
 
     if (props.descriptionPreview) {

@@ -1,9 +1,8 @@
 import { App, prepareFuzzySearch, TFile } from 'obsidian'
+import { t } from '../i18n'
 
-const FILE_TYPE_LABELS: Record<string, string> = {
-  canvas: 'Canvas',
-  base: 'Database'
-}
+const fileTypeLabel = (ext: string): string | undefined =>
+  ext === 'canvas' ? t('notetype.canvas') : ext === 'base' ? t('notetype.database') : undefined
 
 /** Triggers on `[[` in a textarea and lists matching vault files. */
 export class NoteLinkSuggest {
@@ -229,7 +228,7 @@ export class NoteLinkSuggest {
       })
       const nameRow = row.createDiv({ cls: 'pm-note-suggest-name-row' })
       nameRow.createSpan({ cls: 'pm-note-suggest-name', text: file.basename })
-      const typeLabel = FILE_TYPE_LABELS[file.extension]
+      const typeLabel = fileTypeLabel(file.extension)
       if (typeLabel) {
         nameRow.createSpan({ cls: 'pm-note-suggest-type', text: typeLabel })
       }

@@ -5,6 +5,7 @@ import { safeAsync, isTerminalStatus } from '../utils'
 import { openProjectModal } from '../ui/ModalFactory'
 import { EmptyState } from '../ui/primitives/EmptyState'
 import { ProjectCard } from '../ui/composites/ProjectCard'
+import { t } from '../i18n'
 
 export interface ProjectListContext {
   plugin: PMPlugin
@@ -16,10 +17,10 @@ export interface ProjectListContext {
 
 export function renderProjectListToolbar(ctx: ProjectListContext): void {
   ctx.toolbarEl.empty()
-  ctx.toolbarEl.createEl('h2', { text: 'Project manager', cls: 'pm-toolbar-title' })
+  ctx.toolbarEl.createEl('h2', { text: t('dashboard.title'), cls: 'pm-toolbar-title' })
 
   new ButtonComponent(ctx.toolbarEl)
-    .setButtonText('+ new project')
+    .setButtonText(t('dashboard.newProject'))
     .setCta()
     .onClick(() => openCreateProjectModal(ctx))
 }
@@ -32,9 +33,9 @@ export async function renderProjectListContent(ctx: ProjectListContext): Promise
   if (projects.length === 0) {
     new EmptyState(ctx.contentEl)
       .setIcon('📋')
-      .setTitle('No projects yet')
-      .setBody('Create your first project to get started.')
-      .setAction('+ new project', () => openCreateProjectModal(ctx))
+      .setTitle(t('dashboard.noProjects'))
+      .setBody(t('dashboard.noProjectsBody'))
+      .setAction(t('dashboard.newProject'), () => openCreateProjectModal(ctx))
     return
   }
 
@@ -71,7 +72,7 @@ function openProjectContextMenu(ctx: ProjectListContext, project: Project, e: Mo
   const menu = new Menu()
   menu.addItem((item) =>
     item
-      .setTitle('Edit project')
+      .setTitle(t('dashboard.editProject'))
       .setIcon('settings')
       .onClick(() => {
         openProjectModal(ctx.plugin, {
@@ -84,7 +85,7 @@ function openProjectContextMenu(ctx: ProjectListContext, project: Project, e: Mo
   )
   menu.addItem((item) =>
     item
-      .setTitle('Delete project')
+      .setTitle(t('dashboard.deleteProject'))
       .setIcon('trash')
       .onClick(
         safeAsync(async () => {

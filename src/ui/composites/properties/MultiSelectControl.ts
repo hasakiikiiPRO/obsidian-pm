@@ -4,6 +4,7 @@ import { Chip } from '../../primitives/Chip'
 import { Avatar } from '../../primitives/Avatar'
 import { IconButton } from '../../primitives/IconButton'
 import { renderOptionRow } from './optionList'
+import { t } from '../../../i18n'
 
 export interface PickerItem {
   id: string
@@ -101,7 +102,7 @@ export function renderMultiSelect(opts: MultiSelectOpts): void {
       row.createSpan({ cls: 'pm-dep-title', text: labelOf(id) })
       new IconButton(row)
         .setIcon('x')
-        .setTooltip('Remove dependency')
+        .setTooltip(t('field.removeDependency'))
         .onClick(() => {
           opts.remove(id)
           renderValues()
@@ -131,7 +132,7 @@ export function renderMultiSelect(opts: MultiSelectOpts): void {
     const searchInput = opts.search
       ? popover.contentEl.createEl('input', {
           cls: 'pm-pop-field',
-          attr: { placeholder: opts.placeholder ?? 'Search…', spellcheck: 'false' }
+          attr: { placeholder: opts.placeholder ?? t('common.search'), spellcheck: 'false' }
         })
       : null
     const listEl = popover.contentEl.createDiv('pm-pop-list')
@@ -160,7 +161,7 @@ export function renderMultiSelect(opts: MultiSelectOpts): void {
       if (create && q && !opts.options().some((it) => it.label.toLowerCase() === q)) {
         const label = query.trim()
         renderOptionRow(listEl, {
-          label: `Create "${label}"`,
+          label: t('field.createValue', { label }),
           icon: 'plus',
           accent: true,
           onPick: () => {

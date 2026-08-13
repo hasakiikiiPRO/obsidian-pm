@@ -3,6 +3,7 @@ import type PMPlugin from '../main'
 import type { Project, Task, CustomFieldDef } from '../types'
 import { renderChipList } from '../ui/FormField'
 import { stringifyCustomValue } from '../utils'
+import { t } from '../i18n'
 
 export function renderCustomFieldInput(
   cf: CustomFieldDef,
@@ -93,7 +94,7 @@ export function renderCustomFieldInput(
     case 'person': {
       const input = wrap.createEl('input', { type: 'text', cls: 'pm-prop-text' })
       input.value = stringifyCustomValue(currentVal)
-      input.placeholder = 'Person name'
+      input.placeholder = t('field.personName')
       const all = [...new Set([...project.teamMembers, ...plugin.settings.globalTeamMembers])]
       input.setAttribute('list', `pm-persons-${cf.id}`)
       const dl = wrap.createEl('datalist', { attr: { id: `pm-persons-${cf.id}` } })

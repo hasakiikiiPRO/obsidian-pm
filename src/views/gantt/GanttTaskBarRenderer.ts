@@ -3,6 +3,7 @@ import type { Task } from '../../types'
 import { openTaskModal } from '../../ui/ModalFactory'
 import { svgEl, getStatusConfig, safeAsync } from '../../utils'
 import { parsePlainDate } from '../../dates'
+import { t } from '../../i18n'
 import {
   ROW_HEIGHT,
   HEADER_HEIGHT,
@@ -252,7 +253,7 @@ function renderEmptyRowClickTarget(g: SVGGElement, task: Task, row: number, ctx:
       try {
         await ctx.plugin.store.updateTask(ctx.project, task.id, { start: iso, due: iso })
       } catch (err) {
-        new Notice('Failed to set task dates. Please try again.')
+        new Notice(t('gantt.setDatesFailed'))
         console.error('GanttTaskBarRenderer: click-to-set-dates failed', err)
         return
       }
@@ -262,7 +263,7 @@ function renderEmptyRowClickTarget(g: SVGGElement, task: Task, row: number, ctx:
   )
 
   const tt = svgEl('title', {})
-  tt.textContent = 'Click to set dates'
+  tt.textContent = t('gantt.clickToSetDates')
   hitArea.appendChild(tt)
 }
 

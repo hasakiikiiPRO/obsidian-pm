@@ -3,6 +3,7 @@ import { Chip } from '../../primitives/Chip'
 import { IconButton } from '../../primitives/IconButton'
 import { renderTagChip } from '../tagChip'
 import { makeInlineEdit } from './inlineEdit'
+import { t } from '../../../i18n'
 
 export interface TitleCellProps {
   task: Task
@@ -36,7 +37,7 @@ export class TitleCell {
 
     new IconButton(this.el)
       .setIcon('plus')
-      .setTooltip('Add subtask')
+      .setTooltip(t('menu.addSubtask'))
       .setRevealOnHover(true)
       .onClick((e) => {
         e.stopPropagation()
@@ -49,7 +50,7 @@ export class TitleCell {
         .setVariant('solid')
         .setSize('sm')
         .setColor('var(--color-purple)')
-        .setTooltip('Milestone')
+        .setTooltip(t('kanban.milestone'))
     }
     if (task.type === 'subtask') {
       new Chip(this.el)
@@ -57,7 +58,7 @@ export class TitleCell {
         .setVariant('solid')
         .setSize('sm')
         .setColor('var(--color-green)')
-        .setTooltip('Subtask')
+        .setTooltip(t('kanban.subtask'))
     }
     if (task.recurrence) {
       new Chip(this.el)
@@ -65,15 +66,15 @@ export class TitleCell {
         .setVariant('solid')
         .setSize('sm')
         .setColor('var(--color-blue)')
-        .setTooltip('Recurring')
+        .setTooltip(t('kanban.recurring'))
     }
     if (task.archived) {
       new Chip(this.el)
-        .setLabel('Archived')
+        .setLabel(t('filter.archived'))
         .setVariant('solid')
         .setSize('sm')
         .setColor('var(--text-muted)')
-        .setTooltip('Archived')
+        .setTooltip(t('filter.archived'))
     }
 
     if (task.tags.length) {

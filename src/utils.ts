@@ -2,6 +2,7 @@ import { Notice, setIcon } from 'obsidian'
 import type { Task, StatusConfig, PriorityConfig, TaskPriority } from './types'
 import type { DueUrgency } from './ui/composites/dueChip'
 import { today, parsePlainDate } from './dates'
+import { t } from './i18n'
 
 export function stringToColor(s: string): string {
   let hash = 0
@@ -109,7 +110,7 @@ export function safeAsync<A extends unknown[]>(fn: (...args: A) => Promise<void>
         await fn(...args)
       } catch (err: unknown) {
         console.error('[PM]', err)
-        new Notice('Something went wrong. Check the console for details.')
+        new Notice(t('misc.somethingWrong'))
       }
     })()
   }

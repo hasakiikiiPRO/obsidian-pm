@@ -3,6 +3,7 @@ import type PMPlugin from '../main'
 import type { Task, Project } from '../types'
 import { safeAsync } from '../utils'
 import { openTaskModal, confirmDialog, confirmDuplicateSubtasks } from './ModalFactory'
+import { t } from '../i18n'
 
 export interface TaskMenuContext {
   plugin: PMPlugin
@@ -14,7 +15,7 @@ export interface TaskMenuContext {
 export function buildTaskContextMenu(menu: Menu, task: Task, ctx: TaskMenuContext): Menu {
   menu.addItem((item) =>
     item
-      .setTitle('Edit task')
+      .setTitle(t('menu.editTask'))
       .setIcon('pencil')
       .onClick(() => {
         openTaskModal(ctx.plugin, ctx.project, {
@@ -27,7 +28,7 @@ export function buildTaskContextMenu(menu: Menu, task: Task, ctx: TaskMenuContex
   )
   menu.addItem((item) =>
     item
-      .setTitle('Add subtask')
+      .setTitle(t('menu.addSubtask'))
       .setIcon('plus')
       .onClick(() => {
         openTaskModal(ctx.plugin, ctx.project, {
@@ -40,7 +41,7 @@ export function buildTaskContextMenu(menu: Menu, task: Task, ctx: TaskMenuContex
   )
   menu.addItem((item) =>
     item
-      .setTitle('Duplicate task')
+      .setTitle(t('menu.duplicateTask'))
       .setIcon('copy')
       .onClick(
         safeAsync(async () => {
@@ -59,12 +60,12 @@ export function buildTaskContextMenu(menu: Menu, task: Task, ctx: TaskMenuContex
   if (task.archived) {
     menu.addItem((item) =>
       item
-        .setTitle('Unarchive')
+        .setTitle(t('menu.unarchive'))
         .setIcon('archive-restore')
         .onClick(
           safeAsync(async () => {
             await ctx.plugin.store.unarchiveTask(ctx.project, task.id)
-            new Notice('Task unarchived')
+            new Notice(t('task.unarchived'))
             await ctx.onRefresh()
           })
         )
@@ -72,12 +73,12 @@ export function buildTaskContextMenu(menu: Menu, task: Task, ctx: TaskMenuContex
   } else {
     menu.addItem((item) =>
       item
-        .setTitle('Archive')
+        .setTitle(t('menu.archive'))
         .setIcon('archive')
         .onClick(
           safeAsync(async () => {
             await ctx.plugin.store.archiveTask(ctx.project, task.id)
-            new Notice('Task archived')
+            new Notice(t('task.archived'))
             await ctx.onRefresh()
           })
         )
@@ -85,11 +86,11 @@ export function buildTaskContextMenu(menu: Menu, task: Task, ctx: TaskMenuContex
   }
   menu.addItem((item) =>
     item
-      .setTitle('Delete task')
+      .setTitle(t('menu.deleteTask'))
       .setIcon('trash')
       .onClick(
         safeAsync(async () => {
-          if (await confirmDialog(ctx.plugin.app, `Delete "${task.title}"?`)) {
+          if (await confirmDialog(ctx.plugin.app, t('task.deleteConfirm', { title: task.title }))) {
             await ctx.plugin.store.deleteTask(ctx.project, task.id)
             await ctx.onRefresh()
           }

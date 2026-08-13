@@ -6,6 +6,7 @@ import { renderAddButton } from '../ui/composites/addButton'
 import { Avatar } from '../ui/primitives/Avatar'
 import { IconButton } from '../ui/primitives/IconButton'
 import { renderPriorityListEditor, renderStatusListEditor } from '../ui/PaletteListEditor'
+import { t } from '../i18n'
 
 const PROJECT_COLORS = [
   '#8b72be',
@@ -53,7 +54,7 @@ export class ProjectModal extends Modal {
   ) {
     super(app)
     this.isNew = existingProject === null
-    const base = existingProject ?? makeProject('New Project', '')
+    const base = existingProject ?? makeProject(t('project.newTitle'), '')
     this.draft = draftOf(base)
     this.original = draftOf(base)
   }
@@ -85,7 +86,7 @@ export class ProjectModal extends Modal {
     const header = el.createDiv('pm-project-modal-header')
     header.createSpan({ text: '✦', cls: 'pm-project-modal-header-icon' })
     header.createEl('h2', {
-      text: this.isNew ? 'New project' : 'Project settings',
+      text: this.isNew ? t('project.newTitle') : t('project.settingsTitle'),
       cls: 'pm-modal-heading'
     })
 
@@ -109,13 +110,13 @@ export class ProjectModal extends Modal {
     })
 
     const titleWrap = topRow.createDiv('pm-project-title-wrap')
-    titleWrap.createEl('label', { text: 'Project name', cls: 'pm-label' })
+    titleWrap.createEl('label', { text: t('project.name'), cls: 'pm-label' })
     const titleInput = titleWrap.createEl('input', {
       type: 'text',
       value: this.draft.title,
       cls: 'pm-input pm-input--lg'
     })
-    titleInput.placeholder = 'My awesome project'
+    titleInput.placeholder = t('project.namePlaceholder')
     titleInput.addEventListener('input', () => {
       this.draft.title = titleInput.value
     })
@@ -125,7 +126,7 @@ export class ProjectModal extends Modal {
     }, 50)
 
     const colorSection = el.createDiv('pm-project-modal-section')
-    colorSection.createEl('label', { text: 'Color', cls: 'pm-label' })
+    colorSection.createEl('label', { text: t('project.color'), cls: 'pm-label' })
     const colorPalette = colorSection.createDiv('pm-color-palette')
     for (const color of PROJECT_COLORS) {
       const swatch = colorPalette.createEl('button', { cls: 'pm-color-swatch' })
@@ -139,23 +140,23 @@ export class ProjectModal extends Modal {
     }
     const customColor = colorPalette.createEl('input', { type: 'color', cls: 'pm-color-custom' })
     customColor.value = this.draft.color
-    customColor.title = 'Custom color'
+    customColor.title = t('project.customColor')
     customColor.addEventListener('change', () => {
       this.draft.color = customColor.value
       colorPalette.querySelectorAll('.pm-color-swatch').forEach((s) => s.removeClass('pm-color-swatch--selected'))
     })
 
     const descSection = el.createDiv('pm-project-modal-section')
-    descSection.createEl('label', { text: 'Description', cls: 'pm-label' })
+    descSection.createEl('label', { text: t('project.description'), cls: 'pm-label' })
     const descArea = descSection.createEl('textarea', { cls: 'pm-input pm-project-desc' })
-    descArea.placeholder = 'What is this project about?'
+    descArea.placeholder = t('project.descriptionPlaceholder')
     descArea.value = this.draft.description
     descArea.addEventListener('input', () => {
       this.draft.description = descArea.value
     })
 
     const memberSection = el.createDiv('pm-modal-section')
-    memberSection.createEl('label', { text: 'Team members', cls: 'pm-label' })
+    memberSection.createEl('label', { text: t('project.teamMembers'), cls: 'pm-label' })
     const memberWrap = memberSection.createDiv('pm-member-list')
     const renderMembers = () => {
       memberWrap.empty()
@@ -168,20 +169,20 @@ export class ProjectModal extends Modal {
           value: this.draft.teamMembers[i],
           cls: 'pm-input pm-member-input'
         })
-        input.placeholder = 'Name'
+        input.placeholder = t('common.name')
         input.addEventListener('change', () => {
           this.draft.teamMembers[i] = input.value
           renderMembers()
         })
         new IconButton(row)
           .setIcon('x')
-          .setTooltip('Remove member')
+          .setTooltip(t('project.removeMember'))
           .onClick(() => {
             this.draft.teamMembers.splice(i, 1)
             renderMembers()
           })
       }
-      renderAddButton(memberWrap, 'Add member', () => {
+      renderAddButton(memberWrap, t('project.addMember'), () => {
         this.draft.teamMembers.push('')
         renderMembers()
         window.setTimeout(() => {
@@ -194,8 +195,8 @@ export class ProjectModal extends Modal {
 
     const cfSection = el.createDiv('pm-modal-section')
     const cfHeader = cfSection.createDiv('pm-modal-section-header')
-    cfHeader.createSpan({ text: 'Custom fields', cls: 'pm-modal-subheading' })
-    cfHeader.createSpan({ text: 'Extra properties for tasks', cls: 'pm-modal-hint' })
+    cfHeader.createSpan({ text: t('project.customFields'), cls: 'pm-modal-subheading' })
+    cfHeader.createSpan({ text: t('project.customFieldsHint'), cls: 'pm-modal-hint' })
 
     const cfList = cfSection.createDiv('pm-cf-list')
     const renderCFs = () => {
@@ -203,10 +204,10 @@ export class ProjectModal extends Modal {
       for (let i = 0; i < this.draft.customFields.length; i++) {
         this.renderCustomFieldEditor(cfList, this.draft.customFields[i], i, renderCFs)
       }
-      renderAddButton(cfList, 'Add custom field', () => {
+      renderAddButton(cfList, t('project.addCustomField'), () => {
         this.draft.customFields.push({
           id: makeId(),
-          name: 'New Field',
+          name: t('project.newField'),
           type: 'text',
           options: []
         })
@@ -216,16 +217,16 @@ export class ProjectModal extends Modal {
     renderCFs()
 
     this.renderPaletteOverride(el, {
-      heading: 'Statuses',
-      hint: 'The workflow for this project',
-      toggleLabel: 'Use custom statuses instead of the global ones',
-      addLabel: 'Add status',
+      heading: t('project.statuses'),
+      hint: t('project.statusesHint'),
+      toggleLabel: t('project.useCustomStatuses'),
+      addLabel: t('project.addStatus'),
       get: () => this.draft.config?.statuses,
       set: (statuses) => this.patchConfig('statuses', statuses),
       copyGlobal: () => this.plugin.settings.statuses.map((s) => ({ ...s })),
       makeEntry: () => ({
         id: 'status-' + makeId().slice(0, 6),
-        label: 'New status',
+        label: t('project.newStatus'),
         color: '#8a94a0',
         icon: '',
         complete: false
@@ -240,16 +241,16 @@ export class ProjectModal extends Modal {
     })
 
     this.renderPaletteOverride(el, {
-      heading: 'Priorities',
-      hint: 'The priority scale for this project',
-      toggleLabel: 'Use custom priorities instead of the global ones',
-      addLabel: 'Add priority',
+      heading: t('project.priorities'),
+      hint: t('project.prioritiesHint'),
+      toggleLabel: t('project.useCustomPriorities'),
+      addLabel: t('project.addPriority'),
       get: () => this.draft.config?.priorities,
       set: (priorities) => this.patchConfig('priorities', priorities),
       copyGlobal: () => this.plugin.settings.priorities.map((p) => ({ ...p })),
       makeEntry: () => ({
         id: 'priority-' + makeId().slice(0, 6),
-        label: 'New priority',
+        label: t('project.newPriority'),
         color: '#8a94a0',
         icon: ''
       }),
@@ -263,39 +264,39 @@ export class ProjectModal extends Modal {
 
     const behaviorSection = el.createDiv('pm-modal-section')
     const behaviorHeader = behaviorSection.createDiv('pm-modal-section-header')
-    behaviorHeader.createSpan({ text: 'View & scheduling', cls: 'pm-modal-subheading' })
-    behaviorHeader.createSpan({ text: 'Overrides for this project', cls: 'pm-modal-hint' })
+    behaviorHeader.createSpan({ text: t('project.viewScheduling'), cls: 'pm-modal-subheading' })
+    behaviorHeader.createSpan({ text: t('project.viewSchedulingHint'), cls: 'pm-modal-hint' })
     const behaviorGrid = behaviorSection.createDiv('pm-config-override-grid')
 
-    this.renderOverrideSelect(behaviorGrid, 'Default view', 'defaultView', [
-      { value: 'table', label: 'Table' },
-      { value: 'gantt', label: 'Gantt' },
-      { value: 'kanban', label: 'Board' }
+    this.renderOverrideSelect(behaviorGrid, t('project.defaultView'), 'defaultView', [
+      { value: 'table', label: t('view.table') },
+      { value: 'gantt', label: t('view.gantt') },
+      { value: 'kanban', label: t('view.board') }
     ])
-    this.renderOverrideSelect(behaviorGrid, 'Auto-schedule', 'autoSchedule', [
-      { value: true, label: 'On' },
-      { value: false, label: 'Off' }
+    this.renderOverrideSelect(behaviorGrid, t('project.autoSchedule'), 'autoSchedule', [
+      { value: true, label: t('common.on') },
+      { value: false, label: t('common.off') }
     ])
-    this.renderOverrideSelect(behaviorGrid, 'Pull forward on early finish', 'pullForwardOnEarlyFinish', [
-      { value: true, label: 'On' },
-      { value: false, label: 'Off' }
+    this.renderOverrideSelect(behaviorGrid, t('project.pullForward'), 'pullForwardOnEarlyFinish', [
+      { value: true, label: t('common.on') },
+      { value: false, label: t('common.off') }
     ])
-    this.renderOverrideSelect(behaviorGrid, 'Subtasks on board', 'kanbanShowSubtasks', [
-      { value: true, label: 'Show' },
-      { value: false, label: 'Hide' }
+    this.renderOverrideSelect(behaviorGrid, t('project.subtasksOnBoard'), 'kanbanShowSubtasks', [
+      { value: true, label: t('common.show') },
+      { value: false, label: t('common.hide') }
     ])
-    this.renderOverrideSelect(behaviorGrid, 'Description preview on board', 'kanbanShowDescriptionPreview', [
-      { value: true, label: 'Show' },
-      { value: false, label: 'Hide' }
+    this.renderOverrideSelect(behaviorGrid, t('project.descPreviewOnBoard'), 'kanbanShowDescriptionPreview', [
+      { value: true, label: t('common.show') },
+      { value: false, label: t('common.hide') }
     ])
 
     const footer = el.createDiv('pm-modal-footer')
     footer.createDiv('pm-footer-spacer')
 
-    new ButtonComponent(footer).setButtonText('Cancel').onClick(() => this.close())
+    new ButtonComponent(footer).setButtonText(t('common.cancel')).onClick(() => this.close())
 
     new ButtonComponent(footer)
-      .setButtonText(this.isNew ? '+ Create project' : 'Save')
+      .setButtonText(this.isNew ? t('project.createProject') : t('common.save'))
       .setCta()
       .onClick(
         safeAsync(async () => {
@@ -391,7 +392,7 @@ export class ProjectModal extends Modal {
     row.createEl('label', { text: label, cls: 'pm-label' })
     const select = row.createEl('select', { cls: 'pm-input pm-select' })
     const current = this.draft.config?.[key]
-    const inherit = select.createEl('option', { value: '', text: 'Use global' })
+    const inherit = select.createEl('option', { value: '', text: t('project.useGlobal') })
     inherit.selected = current === undefined
     options.forEach((opt, i) => {
       const optionEl = select.createEl('option', { value: String(i), text: opt.label })
@@ -415,21 +416,21 @@ export class ProjectModal extends Modal {
       value: cf.name,
       cls: 'pm-input pm-cf-name'
     })
-    nameInput.placeholder = 'Field name'
+    nameInput.placeholder = t('project.fieldName')
     nameInput.addEventListener('change', () => {
       this.draft.customFields[index].name = nameInput.value
     })
 
     const typeSelect = row.createEl('select', { cls: 'pm-input pm-select pm-cf-type' })
     const types: [CustomFieldDef['type'], string][] = [
-      ['text', 'Text'],
-      ['number', 'Number'],
-      ['date', 'Date'],
-      ['select', 'Select'],
-      ['multiselect', 'Multi-select'],
-      ['person', 'Person'],
-      ['checkbox', 'Checkbox'],
-      ['url', 'URL']
+      ['text', t('project.typeText')],
+      ['number', t('project.typeNumber')],
+      ['date', t('project.typeDate')],
+      ['select', t('project.typeSelect')],
+      ['multiselect', t('project.typeMultiselect')],
+      ['person', t('project.typePerson')],
+      ['checkbox', t('project.typeCheckbox')],
+      ['url', t('project.typeUrl')]
     ]
     for (const [val, label] of types) {
       const opt = typeSelect.createEl('option', { value: val, text: label })
@@ -442,7 +443,7 @@ export class ProjectModal extends Modal {
 
     new IconButton(row)
       .setIcon('x')
-      .setTooltip('Remove field')
+      .setTooltip(t('project.removeField'))
       .onClick(() => {
         this.draft.customFields.splice(index, 1)
         rerender()
@@ -460,21 +461,21 @@ export class ProjectModal extends Modal {
             value: opts[j],
             cls: 'pm-input pm-cf-opt-input'
           })
-          optInput.placeholder = `Option ${j + 1}`
+          optInput.placeholder = t('project.optionN', { n: j + 1 })
           optInput.addEventListener('change', () => {
             opts[j] = optInput.value
             cf.options = opts
           })
           new IconButton(optRow)
             .setIcon('x')
-            .setTooltip('Remove option')
+            .setTooltip(t('project.removeOption'))
             .onClick(() => {
               opts.splice(j, 1)
               cf.options = opts
               renderOpts()
             })
         }
-        renderAddButton(optionsWrap, 'Add option', () => {
+        renderAddButton(optionsWrap, t('project.addOption'), () => {
           opts.push('')
           cf.options = opts
           renderOpts()

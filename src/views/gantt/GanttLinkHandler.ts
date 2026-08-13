@@ -2,6 +2,7 @@ import { Notice } from 'obsidian'
 import type PMPlugin from '../../main'
 import type { Project, Task } from '../../types'
 import { safeAsync } from '../../utils'
+import { t } from '../../i18n'
 
 export interface LinkState {
   active: boolean
@@ -54,7 +55,7 @@ export function handleLinkDotClick(
   }
 
   if (link.side === side) {
-    new Notice('Connect a right dot (output) to a left dot (input).')
+    new Notice(t('gantt.connectDots'))
     return
   }
 
@@ -68,14 +69,14 @@ export function handleLinkDotClick(
   const allTasks = flattenAll(project.tasks)
   const successor = allTasks.find((t) => t.id === successorId)
   if (successor?.dependencies?.includes(predecessorId)) {
-    new Notice('This dependency already exists.')
+    new Notice(t('gantt.depExists'))
     return
   }
 
   // The reverse edge would close a cycle.
   const predecessor = allTasks.find((t) => t.id === predecessorId)
   if (predecessor?.dependencies?.includes(successorId)) {
-    new Notice('Reverse dependency exists — would create a cycle.')
+    new Notice(t('gantt.reverseDep'))
     return
   }
 
@@ -84,7 +85,7 @@ export function handleLinkDotClick(
     try {
       await plugin.store.updateTask(project, successorId, { dependencies: deps })
     } catch (err) {
-      new Notice('Failed to save dependency.')
+      new Notice(t('gantt.saveDepFailed'))
       console.error('GanttLinkHandler: save failed', err)
       return
     }

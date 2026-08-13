@@ -12,6 +12,7 @@ import { openProjectModal, openTaskModal, openProjectPicker, openTaskPicker, ope
 import { Notifier } from './components/Notifier'
 import { migrateProjects } from './migration'
 import { safeAsync } from './utils'
+import { t, setLocale, detectLang } from './i18n'
 
 export default class PMPlugin extends Plugin {
   settings: PMSettings = { ...DEFAULT_SETTINGS }
@@ -44,6 +45,7 @@ export default class PMPlugin extends Plugin {
   }
 
   async onload(): Promise<void> {
+    setLocale(detectLang())
     await this.loadSettings()
     this.store = new ProjectStore(this.app, () => this.settings)
     this.store.registerVaultSync(this)
@@ -61,13 +63,13 @@ export default class PMPlugin extends Plugin {
       })
     )
 
-    this.addRibbonIcon('chart-gantt', 'Project manager', async () => {
+    this.addRibbonIcon('chart-gantt', t('command.projectManager'), async () => {
       await this.router.openDashboard()
     })
 
     this.addCommand({
       id: 'open-projects',
-      name: 'Open projects pane',
+      name: t('command.openProjectsPane'),
       callback: () => {
         void this.router.openDashboard()
       }
@@ -75,7 +77,7 @@ export default class PMPlugin extends Plugin {
 
     this.addCommand({
       id: 'new-project',
-      name: 'Create new project',
+      name: t('command.newProject'),
       callback: () => {
         openProjectModal(this, {
           onSave: async (project) => {
@@ -87,7 +89,7 @@ export default class PMPlugin extends Plugin {
 
     this.addCommand({
       id: 'new-task',
-      name: 'Create new task',
+      name: t('command.newTask'),
       callback: () => {
         void this.pickProjectThenCreateTask(null)
       }
@@ -95,7 +97,7 @@ export default class PMPlugin extends Plugin {
 
     this.addCommand({
       id: 'new-subtask',
-      name: 'Create new subtask',
+      name: t('command.newSubtask'),
       callback: () => {
         void this.pickProjectThenCreateTask('pick-parent')
       }
@@ -103,7 +105,7 @@ export default class PMPlugin extends Plugin {
 
     this.addCommand({
       id: 'undo-last-action',
-      name: 'Undo last action',
+      name: t('command.undo'),
       callback: () => {
         void this.undoLastAction()
       }
@@ -111,7 +113,7 @@ export default class PMPlugin extends Plugin {
 
     this.addCommand({
       id: 'redo-last-action',
-      name: 'Redo last action',
+      name: t('command.redo'),
       callback: () => {
         void this.redoLastAction()
       }
@@ -119,7 +121,7 @@ export default class PMPlugin extends Plugin {
 
     this.addCommand({
       id: 'import-notes-as-tasks',
-      name: 'Import notes as tasks',
+      name: t('command.importNotes'),
       callback: () => {
         void this.importNotes()
       }
@@ -127,7 +129,7 @@ export default class PMPlugin extends Plugin {
 
     this.addCommand({
       id: 'create-task-from-selection',
-      name: 'Create task from selection',
+      name: t('command.fromSelection'),
       editorCheckCallback: (checking, editor) => {
         const selection = editor.getSelection().trim()
         if (!selection) return false
@@ -143,7 +145,7 @@ export default class PMPlugin extends Plugin {
         if (!selection) return
         menu.addItem((item) =>
           item
-            .setTitle('Create task from selection')
+            .setTitle(t('command.fromSelection'))
             .setIcon('list-plus')
             .onClick(() => void this.createTaskFromText(selection))
         )
@@ -152,7 +154,7 @@ export default class PMPlugin extends Plugin {
 
     this.addCommand({
       id: 'open-current-as-project',
-      name: 'Open current file as project',
+      name: t('command.openAsProject'),
       checkCallback: (checking: boolean) => {
         const md = this.app.workspace.getActiveViewOfType(MarkdownView)
         const file = md?.file
@@ -275,14 +277,14 @@ export default class PMPlugin extends Plugin {
   private async pickProjectThenCreateTask(mode: null | 'pick-parent'): Promise<void> {
     const projects = await this.store.loadAllProjects(this.settings.projectsFolder)
     if (!projects.length) {
-      this.showNotice('No projects yet. Create a project first.')
+      this.showNotice(t('main.noProjects'))
       return
     }
     openProjectPicker(this, projects, (project) => {
       if (mode === 'pick-parent') {
         const flat = flattenTasks(project.tasks)
         if (!flat.length) {
-          this.showNotice('No tasks in this project. Create a task first.')
+          this.showNotice(t('main.noTasks'))
           return
         }
         openTaskPicker(
@@ -322,7 +324,7 @@ export default class PMPlugin extends Plugin {
 
     const projects = await this.store.loadAllProjects(this.settings.projectsFolder)
     if (!projects.length) {
-      this.showNotice('No projects yet. Create a project first.')
+      this.showNotice(t('main.noProjects'))
       return
     }
     if (projects.length === 1) {
@@ -357,7 +359,7 @@ export default class PMPlugin extends Plugin {
 
     const projects = await this.store.loadAllProjects(this.settings.projectsFolder)
     if (!projects.length) {
-      this.showNotice('No projects yet. Create a project first.')
+      this.showNotice(t('main.noProjects'))
       return
     }
 

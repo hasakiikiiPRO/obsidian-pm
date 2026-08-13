@@ -1,6 +1,7 @@
 import { Notice } from 'obsidian'
 import type PMPlugin from './main'
 import { parseFrontmatter, isOldFormat } from './store/YamlParser'
+import { t } from './i18n'
 
 /** Rewrites projects whose tasks are embedded in frontmatter as one file per task. */
 export async function migrateProjects(plugin: PMPlugin): Promise<void> {
@@ -21,17 +22,17 @@ export async function migrateProjects(plugin: PMPlugin): Promise<void> {
       const project = await plugin.store.loadProject(file)
       if (!project || project.tasks.length === 0) continue
 
-      new Notice(`Migrating project: ${project.title}...`)
+      new Notice(t('migration.migrating', { title: project.title }))
 
       await plugin.store.saveProject(project)
       migrated++
     } catch (e) {
       console.error(`[PM] Migration failed for ${file.path}:`, e)
-      new Notice(`Project Manager: Migration failed for "${file.basename}". Check console for details.`)
+      new Notice(t('migration.failed', { name: file.basename }))
     }
   }
 
   if (migrated > 0) {
-    new Notice(`Project Manager: Migrated ${migrated} project(s) to new format.`)
+    new Notice(t('migration.done', { count: migrated }))
   }
 }

@@ -1,5 +1,6 @@
 import { ButtonComponent, setIcon } from 'obsidian'
 import { Chip } from './primitives/Chip'
+import { t } from '../i18n'
 
 export function renderPropRow(
   container: HTMLElement,
@@ -48,6 +49,6 @@ export function renderChipList(container: HTMLElement, items: string[], opts: Ch
     opts.renderAdd(container)
   } else if (opts.onAdd) {
     const onAdd = opts.onAdd
-    new ButtonComponent(container).setButtonText(opts.addLabel ?? '+ Add').onClick((e) => onAdd(e))
+    new ButtonComponent(container).setButtonText(opts.addLabel ?? '+ ' + t('common.add')).onClick((e) => onAdd(e))
   }
 }

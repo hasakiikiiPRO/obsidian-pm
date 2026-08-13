@@ -10,6 +10,7 @@ import {
   type TaskNotesTaskInfo
 } from '../integrations/tasknotes'
 import { buildImportForest, type TaskNotesImportItem } from '../integrations/tasknotesImport'
+import { t, tPlural } from '../i18n'
 
 interface FileItem {
   file: TFile
@@ -97,7 +98,7 @@ export class ImportModal extends Modal {
 
     const header = contentEl.createDiv('import-modal-header')
 
-    header.createEl('h2', { text: 'Select notes to import' })
+    header.createEl('h2', { text: t('import.title') })
 
     this.counterLabel = header.createDiv('import-counter')
     this.updateCounter()
@@ -107,7 +108,7 @@ export class ImportModal extends Modal {
     this.searchInput = searchContainer.createEl('input', {
       type: 'text',
       cls: 'prompt-input import-search-input',
-      placeholder: 'Search files...'
+      placeholder: t('import.searchFiles')
     })
     this.searchInput.addEventListener('input', () => this.handleSearch())
 
@@ -122,7 +123,7 @@ export class ImportModal extends Modal {
     })
     this.selectAllCheckbox.addEventListener('change', () => this.handleSelectAll())
 
-    const selectAllLabel = selectAllRow.createEl('label', { text: 'Select all' })
+    const selectAllLabel = selectAllRow.createEl('label', { text: t('import.selectAll') })
     selectAllLabel.addEventListener('click', () => {
       if (this.selectAllCheckbox) {
         this.selectAllCheckbox.checked = !this.selectAllCheckbox.checked
@@ -134,10 +135,10 @@ export class ImportModal extends Modal {
 
     const footer = contentEl.createDiv('import-modal-footer')
 
-    new ButtonComponent(footer).setButtonText('Cancel').onClick(() => this.close())
+    new ButtonComponent(footer).setButtonText(t('common.cancel')).onClick(() => this.close())
 
     this.nextButton = new ButtonComponent(footer)
-      .setButtonText('Next')
+      .setButtonText(t('common.next'))
       .setCta()
       .setDisabled(this.selectedCount === 0)
       .onClick(() => this.handleNext())
@@ -148,12 +149,12 @@ export class ImportModal extends Modal {
     contentEl.empty()
 
     const header = contentEl.createDiv('import-options-header')
-    header.createEl('h2', { text: 'Import options' })
+    header.createEl('h2', { text: t('import.options') })
 
     const content = contentEl.createDiv('import-options-content')
 
     const statusGroup = content.createDiv('import-option-group')
-    statusGroup.createEl('label', { text: 'Default status' })
+    statusGroup.createEl('label', { text: t('import.defaultStatus') })
 
     const statusSelect = statusGroup.createEl('select')
 
@@ -168,7 +169,7 @@ export class ImportModal extends Modal {
     })
 
     const priorityGroup = content.createDiv('import-option-group')
-    priorityGroup.createEl('label', { text: 'Default priority' })
+    priorityGroup.createEl('label', { text: t('import.defaultPriority') })
 
     const prioritySelect = priorityGroup.createEl('select')
 
@@ -183,7 +184,7 @@ export class ImportModal extends Modal {
     })
 
     const handlingGroup = content.createDiv('import-option-group')
-    handlingGroup.createEl('label', { text: 'File handling' })
+    handlingGroup.createEl('label', { text: t('import.fileHandling') })
 
     const radioGroup = handlingGroup.createDiv('import-radio-group')
 
@@ -197,7 +198,7 @@ export class ImportModal extends Modal {
       this.fileHandling = 'move'
     })
 
-    moveLabel.createSpan({ text: 'Move to tasks folder (default)' })
+    moveLabel.createSpan({ text: t('import.move') })
 
     const copyLabel = radioGroup.createEl('label')
 
@@ -209,13 +210,15 @@ export class ImportModal extends Modal {
       this.fileHandling = 'copy'
     })
 
-    copyLabel.createSpan({ text: 'Copy (keep original)' })
+    copyLabel.createSpan({ text: t('import.copy') })
 
     const footer = contentEl.createDiv('import-modal-footer')
 
-    new ButtonComponent(footer).setButtonText('Back').onClick(() => this.handleBack())
+    new ButtonComponent(footer).setButtonText(t('common.back')).onClick(() => this.handleBack())
 
-    const importButton = new ButtonComponent(footer).setButtonText(`Import (${this.selectedCount})`).setCta()
+    const importButton = new ButtonComponent(footer)
+      .setButtonText(t('import.importN', { n: this.selectedCount }))
+      .setCta()
     importButton.onClick(() => {
       void this.handleImport()
     })
@@ -281,7 +284,7 @@ export class ImportModal extends Modal {
     if (!this.counterLabel) return
     const count = this.files.filter((f) => f.selected).length
     this.selectedCount = count
-    this.counterLabel.setText(`${count} selected`)
+    this.counterLabel.setText(t('import.selected', { count }))
   }
 
   private updateSelectAllCheckbox(): void {
@@ -308,7 +311,7 @@ export class ImportModal extends Modal {
 
   private async handleImport(): Promise<void> {
     if (!this.project) {
-      new Notice('Error: project not set for import', 5000)
+      new Notice(t('import.notSet'), 5000)
       return
     }
 
@@ -356,9 +359,9 @@ export class ImportModal extends Modal {
       this.onImportComplete()
     }
 
-    let message = `Imported ${imported} task${imported !== 1 ? 's' : ''}`
+    let message = tPlural(imported, 'import.result')
     if (skipped > 0) {
-      message += ` (${skipped} skipped)`
+      message += ` ${t('import.skipped', { count: skipped })}`
     }
     new Notice(message, 3000)
 
