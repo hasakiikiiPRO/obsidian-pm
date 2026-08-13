@@ -1,5 +1,5 @@
 import { Notice, setIcon } from 'obsidian'
-import type { Task, StatusConfig, PriorityConfig, TaskPriority } from './types'
+import type { Task, StatusConfig, PriorityConfig, TaskPriority, TaskSortMode } from './types'
 import type { DueUrgency } from './ui/composites/dueChip'
 import { today, parsePlainDate } from './dates'
 import { t } from './i18n'
@@ -46,6 +46,23 @@ export function getCompleteStatusId(statuses: StatusConfig[]): string {
 export function statusSortOrder(status: string, statuses: StatusConfig[]): number {
   const idx = statuses.findIndex((s) => s.id === status)
   return idx >= 0 ? idx : 999
+}
+
+function priorityRank(p: TaskPriority, priorities: PriorityConfig[]): number {
+  const idx = priorities.findIndex((cfg) => cfg.id === p)
+  return idx >= 0 ? idx : 999
+}
+
+/** Returns a copy with the top-level tasks reordered; subtasks keep their parents. */
+export function sortTaskTree(tasks: Task[], mode: TaskSortMode, priorities: PriorityConfig[]): Task[] {
+  if (mode === 'default') return tasks
+  const sorted = [...tasks]
+  if (mode === 'priority') {
+    sorted.sort((a, b) => priorityRank(a.priority, priorities) - priorityRank(b.priority, priorities))
+  } else if (mode === 'due') {
+    sorted.sort((a, b) => (a.due || '\uffff').localeCompare(b.due || '\uffff'))
+  }
+  return sorted
 }
 
 /** Terminal tasks are never urgent. */

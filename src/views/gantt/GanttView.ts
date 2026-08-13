@@ -1,6 +1,6 @@
-import { ButtonComponent } from 'obsidian'
+import { ButtonComponent, Menu } from 'obsidian'
 import type PMPlugin from '../../main'
-import type { Project, Task, GanttGranularity, FilterState } from '../../types'
+import type { Project, Task, GanttGranularity, FilterState, TaskSortMode } from '../../types'
 import { type FlatTask, flattenTasks } from '../../store/TaskTreeOps'
 import { applyTaskFilterPromote } from '../../store/TaskFilter'
 import { openTaskModal } from '../../ui/ModalFactory'
@@ -21,7 +21,7 @@ import {
   renderDependencyArrows,
   renderMilestoneLabels
 } from './GanttRenderer'
-import { svgEl } from '../../utils'
+import { svgEl, sortTaskTree } from '../../utils'
 import { Temporal, today } from '../../dates'
 import type { RendererContext } from './GanttRenderer'
 import { renderTaskLabel } from './TaskLabelRenderer'
@@ -29,6 +29,7 @@ import { t } from '../../i18n'
 
 export class GanttView implements SubView {
   private granularity: GanttGranularity
+  private sortMode: TaskSortMode = 'default'
   private scrollEl!: HTMLElement
   private svgEl!: SVGSVGElement
   private headerSvgEl!: SVGSVGElement
@@ -114,6 +115,9 @@ export class GanttView implements SubView {
     })
 
     bar.createSpan({ cls: 'pm-gantt-sep' })
+
+    this.renderSortControl(bar)
+
     new ButtonComponent(bar).setButtonText(t('gantt.today')).onClick(() => this.scrollToToday())
 
     new ButtonComponent(bar).setButtonText(t('gantt.expandAll')).onClick(() => this.setAllCollapsed(false))
@@ -307,7 +311,32 @@ export class GanttView implements SubView {
   }
 
   private getVisibleTasks(): Task[] {
-    return applyTaskFilterPromote(this.project.tasks, this.filter, this.plugin.store.configFor(this.project).statuses)
+    const config = this.plugin.store.configFor(this.project)
+    const tasks = applyTaskFilterPromote(this.project.tasks, this.filter, config.statuses)
+    return sortTaskTree(tasks, this.sortMode, config.priorities)
+  }
+
+  private renderSortControl(bar: HTMLElement): void {
+    const modes: TaskSortMode[] = ['default', 'priority', 'due']
+    new ButtonComponent(bar)
+      .setIcon('arrow-up-down')
+      .setButtonText(t(`sort.${this.sortMode}`))
+      .setTooltip(t('sort.title'))
+      .onClick((e) => {
+        const menu = new Menu()
+        for (const mode of modes) {
+          menu.addItem((item) =>
+            item
+              .setTitle(t(`sort.${mode}`))
+              .setChecked(this.sortMode === mode)
+              .onClick(() => {
+                this.sortMode = mode
+                this.render()
+              })
+          )
+        }
+        menu.showAtMouseEvent(e)
+      })
   }
 
   private scrollToToday(): void {

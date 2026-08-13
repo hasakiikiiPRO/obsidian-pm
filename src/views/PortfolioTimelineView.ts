@@ -1,8 +1,8 @@
-import { ButtonComponent, ItemView, WorkspaceLeaf, setIcon } from 'obsidian'
+import { ButtonComponent, ItemView, WorkspaceLeaf, Menu, setIcon } from 'obsidian'
 import type PMPlugin from '../main'
-import type { GanttGranularity, Project, StatusConfig, Task } from '../types'
+import type { GanttGranularity, Project, StatusConfig, Task, TaskSortMode } from '../types'
 import { flattenTasks } from '../store/TaskTreeOps'
-import { getPriorityConfig, getStatusConfig, svgEl } from '../utils'
+import { getPriorityConfig, getStatusConfig, sortTaskTree, svgEl } from '../utils'
 import { parsePlainDate, today } from '../dates'
 import { t } from '../i18n'
 import { openTaskModal } from '../ui/ModalFactory'
@@ -33,6 +33,7 @@ export const PM_PORTFOLIO_TIMELINE_VIEW_TYPE = 'pm-portfolio-timeline'
 export class PortfolioTimelineView extends ItemView {
   private plugin: PMPlugin
   private granularity: GanttGranularity
+  private sortMode: TaskSortMode = 'default'
   private scrollEl: HTMLElement | null = null
   private cfg: TimelineCfg | null = null
 
@@ -107,7 +108,31 @@ export class PortfolioTimelineView extends ItemView {
     })
 
     bar.createSpan({ cls: 'pm-gantt-sep' })
+    this.renderSortControl(bar)
     new ButtonComponent(bar).setButtonText(t('gantt.today')).onClick(() => this.scrollToToday())
+  }
+
+  private renderSortControl(bar: HTMLElement): void {
+    const modes: TaskSortMode[] = ['default', 'priority', 'due']
+    new ButtonComponent(bar)
+      .setIcon('arrow-up-down')
+      .setButtonText(t(`sort.${this.sortMode}`))
+      .setTooltip(t('sort.title'))
+      .onClick((e) => {
+        const menu = new Menu()
+        for (const mode of modes) {
+          menu.addItem((item) =>
+            item
+              .setTitle(t(`sort.${mode}`))
+              .setChecked(this.sortMode === mode)
+              .onClick(() => {
+                this.sortMode = mode
+                void this.render()
+              })
+          )
+        }
+        menu.showAtMouseEvent(e)
+      })
   }
 
   private renderTimeline(root: HTMLElement, projects: Project[]): void {
@@ -205,10 +230,11 @@ export class PortfolioTimelineView extends ItemView {
       this.renderProjectRow(leftBody, barsGroup, project, row, cfg)
       row++
 
-      const statuses = this.plugin.store.configFor(project).statuses
-      for (const { task, depth } of flattenTasks(project.tasks)) {
-        this.renderTaskLabelRow(leftBody, project, task, depth, statuses)
-        this.renderReadonlyBar(barsGroup, project, task, row, cfg, statuses)
+      const config = this.plugin.store.configFor(project)
+      const sorted = sortTaskTree(project.tasks, this.sortMode, config.priorities)
+      for (const { task, depth } of flattenTasks(sorted)) {
+        this.renderTaskLabelRow(leftBody, project, task, depth, config.statuses)
+        this.renderReadonlyBar(barsGroup, project, task, row, cfg, config.statuses)
         row++
       }
     }
