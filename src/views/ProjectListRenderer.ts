@@ -20,6 +20,10 @@ export function renderProjectListToolbar(ctx: ProjectListContext): void {
   ctx.toolbarEl.createEl('h2', { text: t('dashboard.title'), cls: 'pm-toolbar-title' })
 
   new ButtonComponent(ctx.toolbarEl)
+    .setButtonText(t('portfolio.title'))
+    .onClick(() => void ctx.plugin.router.openPortfolioTimeline())
+
+  new ButtonComponent(ctx.toolbarEl)
     .setButtonText(t('dashboard.newProject'))
     .setCta()
     .onClick(() => openCreateProjectModal(ctx))

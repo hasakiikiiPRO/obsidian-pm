@@ -60,6 +60,7 @@ const en: Messages = {
   'command.importNotes': 'Import notes as tasks',
   'command.fromSelection': 'Create task from selection',
   'command.openAsProject': 'Open current file as project',
+  'command.openPortfolioTimeline': 'Open portfolio timeline',
   'main.noProjects': 'No projects yet. Create a project first.',
   'main.noTasks': 'No tasks in this project. Create a task first.',
 
@@ -372,6 +373,12 @@ const en: Messages = {
   'gantt.datesReverted': 'Dates reverted. Dependent task dates may need adjustment.',
   'gantt.setDatesFailed': 'Failed to set task dates. Please try again.',
   'gantt.clickToSetDates': 'Click to set dates',
+  'gantt.tip':
+    '{title}\n{status} \u00b7 {priority}\n{startLabel}: {start}  {dueLabel}: {due}\n{progressLabel}: {progress}%{assignees}',
+  'gantt.tipStart': 'Start',
+  'gantt.tipDue': 'Due',
+  'gantt.tipProgress': 'Progress',
+  'gantt.tipAssignees': '\nAssignees: {names}',
 
   // --- kanban ---
   'kanban.milestone': 'Milestone',
@@ -387,6 +394,10 @@ const en: Messages = {
   'dashboard.editProject': 'Edit project',
   'dashboard.deleteProject': 'Delete project',
   'dashboard.card.tasks': '{done}/{total} tasks',
+
+  // --- portfolio timeline ---
+  'portfolio.title': 'Timeline',
+  'portfolio.noProjects': 'No projects yet',
 
   // --- project view ---
   'projectView.project': 'Project',
@@ -490,6 +501,7 @@ const zh: Messages = {
   'command.importNotes': '将笔记导入为任务',
   'command.fromSelection': '从选区创建任务',
   'command.openAsProject': '将当前文件作为项目打开',
+  'command.openPortfolioTimeline': '打开全局时间线',
   'main.noProjects': '暂无项目，请先创建一个项目。',
   'main.noTasks': '此项目暂无任务，请先创建一个任务。',
 
@@ -802,6 +814,12 @@ const zh: Messages = {
   'gantt.datesReverted': '日期已还原，依赖任务的日期可能需要调整。',
   'gantt.setDatesFailed': '设置任务日期失败，请重试。',
   'gantt.clickToSetDates': '点击设置日期',
+  'gantt.tip':
+    '{title}\n{status} \u00b7 {priority}\n{startLabel}：{start}  {dueLabel}：{due}\n{progressLabel}：{progress}%{assignees}',
+  'gantt.tipStart': '开始',
+  'gantt.tipDue': '截止',
+  'gantt.tipProgress': '进度',
+  'gantt.tipAssignees': '\n负责人：{names}',
 
   // --- kanban ---
   'kanban.milestone': '里程碑',
@@ -817,6 +835,10 @@ const zh: Messages = {
   'dashboard.editProject': '编辑项目',
   'dashboard.deleteProject': '删除项目',
   'dashboard.card.tasks': '{done}/{total} 个任务',
+
+  // --- portfolio timeline ---
+  'portfolio.title': '全局时间线',
+  'portfolio.noProjects': '暂无项目',
 
   // --- project view ---
   'projectView.project': '项目',

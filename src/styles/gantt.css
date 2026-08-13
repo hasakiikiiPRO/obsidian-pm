@@ -101,6 +101,31 @@
   margin-right: 8px;
 }
 
+.pm-gantt-project-row {
+  font-weight: 600;
+  padding-left: 8px;
+  gap: 8px;
+}
+.pm-gantt-project-row:hover {
+  background: var(--background-modifier-hover);
+}
+.pm-gantt-project-icon {
+  flex-shrink: 0;
+}
+.pm-gantt-project-title {
+  flex: 1;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-normal);
+}
+.pm-gantt-project-band {
+  pointer-events: none;
+}
+
 .pm-gantt-resize-handle {
   width: 4px;
   cursor: col-resize;

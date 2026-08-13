@@ -111,8 +111,19 @@ export function renderTaskBar(g: SVGGElement, task: Task, row: number, _depth: n
   }
 
   const ttEl = svgEl('title', {})
-  const assigneesStr = task.assignees.length ? `\nAssignees: ${task.assignees.join(', ')}` : ''
-  ttEl.textContent = `${task.title}\n${statusConfig?.label ?? task.status} \u00b7 ${task.priority}\nStart: ${task.start || '\u2014'}  Due: ${task.due || '\u2014'}\nProgress: ${task.progress}%${assigneesStr}`
+  const assigneesStr = task.assignees.length ? t('gantt.tipAssignees', { names: task.assignees.join(', ') }) : ''
+  ttEl.textContent = t('gantt.tip', {
+    title: task.title,
+    status: statusConfig?.label ?? task.status,
+    priority: task.priority,
+    startLabel: t('gantt.tipStart'),
+    dueLabel: t('gantt.tipDue'),
+    progressLabel: t('gantt.tipProgress'),
+    start: task.start || '\u2014',
+    due: task.due || '\u2014',
+    progress: task.progress,
+    assignees: assigneesStr
+  })
   rect.appendChild(ttEl)
 
   const HANDLE_W = 8
