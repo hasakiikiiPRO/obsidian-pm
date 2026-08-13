@@ -1,14 +1,14 @@
-import { ButtonComponent, ItemView, WorkspaceLeaf } from 'obsidian'
+import { ButtonComponent, ItemView, WorkspaceLeaf, setIcon } from 'obsidian'
 import type PMPlugin from '../main'
 import type { GanttGranularity, Project, StatusConfig, Task } from '../types'
 import { flattenTasks } from '../store/TaskTreeOps'
-import { getStatusConfig, svgEl } from '../utils'
+import { getPriorityConfig, getStatusConfig, svgEl } from '../utils'
 import { parsePlainDate, today } from '../dates'
 import { t } from '../i18n'
 import { openTaskModal } from '../ui/ModalFactory'
 import { EmptyState } from '../ui/primitives/EmptyState'
 import { SegmentedControl } from '../ui/primitives/SegmentedControl'
-import { renderStatusDot } from '../ui/StatusBadge'
+import { PRIORITY_CHEVRONS, renderStatusDot } from '../ui/StatusBadge'
 import {
   BAR_BORDER_RADIUS,
   BAR_PADDING,
@@ -250,6 +250,10 @@ export class PortfolioTimelineView extends ItemView {
     el.style.height = `${ROW_HEIGHT}px`
     el.style.paddingLeft = `${depth * 18 + 8}px`
     renderStatusDot(el, task.status, statuses, 'pm-gantt-label-dot')
+    const priorityConfig = getPriorityConfig(this.plugin.store.configFor(project).priorities, task.priority)
+    const priorityEl = el.createSpan({ cls: 'pm-gantt-label-priority' })
+    setIcon(priorityEl, PRIORITY_CHEVRONS[task.priority] ?? 'equal')
+    if (priorityConfig?.color) priorityEl.style.color = priorityConfig.color
     const titleEl = el.createSpan({ text: task.title, cls: 'pm-gantt-label-title' })
     titleEl.addEventListener('click', () => {
       openTaskModal(this.plugin, project, { task, onSave: () => this.render() })

@@ -77,8 +77,7 @@ export class KanbanView implements SubView {
 
   private buildCardData(task: Task): KanbanCardData {
     const priorityConfig = getPriorityConfig(this.config.priorities, task.priority)
-    const priorityColor =
-      priorityConfig && task.priority !== 'medium' && task.priority !== 'low' ? priorityConfig.color : undefined
+    const priorityColor = priorityConfig ? priorityConfig.color : undefined
 
     let descriptionPreview: string | undefined
     if (this.config.kanbanShowDescriptionPreview && task.description.trim()) {

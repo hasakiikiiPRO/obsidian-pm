@@ -1,10 +1,11 @@
+import { setIcon } from 'obsidian'
 import type PMPlugin from '../../main'
 import type { Project, StatusConfig, Task } from '../../types'
 import { CollapseToggle } from '../../ui/primitives/CollapseToggle'
 import { IconButton } from '../../ui/primitives/IconButton'
 import { openTaskModal } from '../../ui/ModalFactory'
-import { renderStatusDot } from '../../ui/StatusBadge'
-import { safeAsync } from '../../utils'
+import { PRIORITY_CHEVRONS, renderStatusDot } from '../../ui/StatusBadge'
+import { getPriorityConfig, safeAsync } from '../../utils'
 import { ROW_HEIGHT } from './TimelineConfig'
 import { t } from '../../i18n'
 
@@ -72,6 +73,11 @@ export function renderTaskLabel(
   }
 
   renderStatusDot(el, task.status, ctx.statuses, 'pm-gantt-label-dot')
+
+  const priorityConfig = getPriorityConfig(ctx.plugin.store.configFor(ctx.project).priorities, task.priority)
+  const priorityEl = el.createSpan({ cls: 'pm-gantt-label-priority' })
+  setIcon(priorityEl, PRIORITY_CHEVRONS[task.priority] ?? 'equal')
+  if (priorityConfig?.color) priorityEl.style.color = priorityConfig.color
 
   const titleEl = el.createSpan({ text: task.title, cls: 'pm-gantt-label-title' })
   titleEl.addEventListener('click', () => {

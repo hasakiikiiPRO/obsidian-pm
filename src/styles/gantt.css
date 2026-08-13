@@ -82,6 +82,14 @@
   flex-shrink: 0;
 }
 
+.pm-gantt-label-priority {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  --icon-size: 14px;
+  color: var(--text-muted);
+}
+
 .pm-gantt-label-title {
   flex: 1;
   font-size: 13px;
